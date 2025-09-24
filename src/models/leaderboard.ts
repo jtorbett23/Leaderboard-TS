@@ -1,7 +1,7 @@
-export interface LeaderboardItem {
+export interface Score {
   id: number;
   name: string;
   score: number;
 }
 
-export let leaderboard: LeaderboardItem[] = [];
+export let leaderboard: Score[] = [];
