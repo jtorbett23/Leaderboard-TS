@@ -1,9 +1,10 @@
 {
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.5.2",
-    "eslint": "^9.36.0",
-    "prettier": "^3.6.2",
+    "jest": "^30.1.3",
+    "ts-jest": "^29.4.4",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
@@ -15,6 +16,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx watch --include ./src/**/* ./src/server.ts",
-    "lint": "eslint 'src/**/*.ts'"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "migrate": "ts-jest config:migrate jest.config.js"
   }
 }
