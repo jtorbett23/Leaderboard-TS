@@ -20,7 +20,7 @@
     "start": "node dist/server.js",
     "dev": "tsx watch --include ./src/**/* ./src/server.ts",
     "dev-docker": "tsx watch ./src/server.ts",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "migrate": "ts-jest config:migrate jest.config.js"
   }

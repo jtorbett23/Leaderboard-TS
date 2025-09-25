@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { leaderboard } from '../models/leaderboard';
 import { get_all_data } from '../db/mysql';
 
 
