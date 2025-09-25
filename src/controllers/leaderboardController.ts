@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { get_all_data } from '../db/mysql';
+import { getLeaderboardForGame } from '../db/database';
 
 
 export const getLeaderboard  = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        let data = await get_all_data()
+        let data = await getLeaderboardForGame("test")
         return res.json(data)
     }
     catch (error){
