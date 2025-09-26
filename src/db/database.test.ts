@@ -82,6 +82,53 @@ describe('Database', () => {
         expect(result).toBe(mockResponseData);
     });
 
+    it('getLeaderboardKeyForGame success', async () => {
+        const mockGame: string = 'test';
+        const mockApiKey: string = 'test-key';
+        const mockResponseData = [
+            {
+                apiKey: mockApiKey
+            }
+        ];
+        const mockPool = {} as mysql.Pool;
+        const mockGetPool = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
+        const mockExecuteQuery = jest.spyOn(db, 'executeQuery');
+        mockExecuteQuery.mockResolvedValue(
+            mockResponseData as mysql.RowDataPacket[]
+        );
+        const expectedQuery = `SELECT apiKey FROM apiKeys WHERE game="${mockGame}"`;
+
+        const result = await db.getLeaderboardKeyForGame(mockGame);
+
+        expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
+        expect(mockGetPool).toHaveBeenCalledTimes(1);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(result).toBe(mockApiKey);
+    });
+
+    it('getLeaderboardKeyForGame fails with empty array', async () => {
+        const mockGame: string = 'test';
+        const mockResponseData: mysql.RowDataPacket[] = [];
+        const mockPool = {} as mysql.Pool;
+        const mockGetPool = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
+        const mockExecuteQuery = jest.spyOn(db, 'executeQuery');
+        mockExecuteQuery.mockResolvedValue(mockResponseData);
+        const expectedQuery = `SELECT apiKey FROM apiKeys WHERE game="${mockGame}"`;
+
+        try {
+            await db.getLeaderboardKeyForGame(mockGame);
+        } catch (err) {
+            expect(err).toStrictEqual({
+                message: 'Game does not exist',
+                status: 422
+            });
+        }
+
+        expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
+        expect(mockGetPool).toHaveBeenCalledTimes(1);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+    });
+
     it('submitLeaderboardScoreForGame with score', async () => {
         const mockGame: string = 'test';
         const mockName: string = 'tester';
