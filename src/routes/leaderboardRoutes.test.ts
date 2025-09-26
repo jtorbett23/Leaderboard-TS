@@ -2,6 +2,11 @@ import request from 'supertest';
 import app from '../app';
 import * as db from '../db/database';
 import { Score } from '../models/leaderboard';
+import { NextFunction, Request, Response } from 'express';
+
+jest.mock('../middlewares/validateApiKey', () => ({
+    authenticateKey: (req: Request, res: Response, next: NextFunction) => next()
+}));
 
 describe('GET /leaderboard/:game', () => {
     beforeEach(() => {
