@@ -37,8 +37,9 @@ export const submitLeaderboardScoreForGame = async (
     score: number | undefined = undefined,
     time: number | undefined = undefined
 ): Promise<boolean> => {
-    var fields = '(name';
-    var values = `("${name}"`;
+    // Build the query depending on which inputs exist
+    var fields: string = '(name';
+    var values: string = `("${name}"`;
     if (score !== undefined) {
         fields += ', score';
         values += `, "${score}"`;
@@ -49,9 +50,8 @@ export const submitLeaderboardScoreForGame = async (
     }
     fields += ')';
     values += ')';
-    console.log(values);
+
     const query = `INSERT INTO ${game} ${fields} VALUES ${values};`;
-    console.log(query);
     await executeQuery(getPool(), query);
     return true;
 };
