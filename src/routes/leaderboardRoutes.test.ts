@@ -1,39 +1,112 @@
 import request from 'supertest';
 import app from '../app';
 import * as db from '../db/database';
-import { QueryResult } from 'mysql2/promise';
 import { Score } from '../models/leaderboard';
 
-describe('GET /leaderboard/', () => {
+describe('GET /leaderboard/:game', () => {
+  beforeEach(()=> {
+    jest.resetAllMocks()
+  })
     it('should provide empty array when no scores exist', async () => {
-        const getLeaderboardForGameMock = new Promise<Score[]>(
+        const mockReturnGetLeaderboardForGame = new Promise<Score[]>(
             (resolve, reject) => {
                 resolve([]);
             }
         );
-        const mock = jest.spyOn(db, 'getLeaderboardForGame');
-        mock.mockReturnValue(getLeaderboardForGameMock);
+        const mockGetLeaderboardForGame = jest.spyOn(db, 'getLeaderboardForGame').mockReturnValue(mockReturnGetLeaderboardForGame);
+        const mockGame: string = "test"
 
         const res = await request(app)
-            .get('/leaderboard/test')
+            .get(`/leaderboard/${mockGame}`)
             .expect('Content-Type', /json/)
             .expect(200);
-
         expect(res.body).toStrictEqual([]);
+        expect(mockGetLeaderboardForGame).toHaveBeenCalledTimes(1)
+        expect(mockGetLeaderboardForGame).toHaveBeenCalledWith(mockGame)
     });
 
-    it('should raise an error when get_all_data errors', async () => {
-        const getLeaderboardForGameMock = new Promise<Score[]>(
+    it('should raise an error when database errors', async () => {
+        const mockReturnGetLeaderboardForGame = new Promise<Score[]>(
             (resolve, reject) => {
                 reject('Database failure');
             }
         );
-        const mock = jest.spyOn(db, 'getLeaderboardForGame');
-        mock.mockReturnValue(getLeaderboardForGameMock);
+        const mockGetLeaderboardForGame = jest.spyOn(db, 'getLeaderboardForGame').mockReturnValue(mockReturnGetLeaderboardForGame);
+        const mockGame: string = "test"
 
         const res = await request(app)
-            .get('/leaderboard/test')
+            .get(`/leaderboard/${mockGame}`)
             .expect('Content-Type', /json/)
             .expect(500);
+        
+        expect(mockGetLeaderboardForGame).toHaveBeenCalledTimes(1)
+        expect(mockGetLeaderboardForGame).toHaveBeenCalledWith(mockGame)
+        expect(res.body).toStrictEqual({"message": "Internal Server Error"});
+
+    });
+});
+
+
+describe('POST /leaderboard/:game', () => {
+  beforeEach(()=> {
+    jest.resetAllMocks()
+  })
+    it('should return true for valid inputs', async () => {
+        const mockReturnSubmitLeaderboardScoreForGame = new Promise<boolean>(
+            (resolve, reject) => {
+                resolve(true);
+            }
+        );
+        const mockSubmitLeaderboardScoreForGame = jest.spyOn(db, 'submitLeaderboardScoreForGame').mockReturnValue(mockReturnSubmitLeaderboardScoreForGame);
+        const mockGame: string = "test"
+        const mockName: string = "tester"
+
+        const res = await request(app)
+            .post(`/leaderboard/${mockGame}`)
+            .send({ name: mockName})
+            .expect('Content-Type', /json/)
+            .expect(200);
+        expect(res.body).toStrictEqual(true);
+        expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1)
+        expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledWith(mockGame, mockName)
+    });
+
+    it('should raise an error when name is not sent in body', async () => {
+        const mockSubmitLeaderboardScoreForGame = jest.spyOn(db, 'submitLeaderboardScoreForGame');
+        const mockGame: string = "test"
+        const mockName: string = "tester"
+
+
+        const res = await request(app)
+            .post(`/leaderboard/${mockGame}`)
+            .send({ noName: mockName})
+            .expect('Content-Type', /json/)
+            .expect(422);
+        
+        expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(0)
+        expect(res.body).toStrictEqual({"message": "No name provided for score"});
+    })
+
+    it('should raise an error when database errors', async () => {
+        const mockReturnSubmitLeaderboardScoreForGame = new Promise<boolean>(
+            (resolve, reject) => {
+                reject('Database failure');
+            }
+        );
+        const mockSubmitLeaderboardScoreForGame = jest.spyOn(db, 'submitLeaderboardScoreForGame').mockReturnValue(mockReturnSubmitLeaderboardScoreForGame);
+        const mockGame: string = "test"
+        const mockName: string = "tester"
+
+
+        const res = await request(app)
+            .post(`/leaderboard/${mockGame}`)
+            .send({ name: mockName})
+            .expect('Content-Type', /json/)
+            .expect(500);
+        
+        expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1)
+        expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledWith(mockGame, mockName)
+        expect(res.body).toStrictEqual({"message": "Internal Server Error"});
+
     });
 });

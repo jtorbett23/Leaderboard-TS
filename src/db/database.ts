@@ -21,11 +21,6 @@ export const executeQuery = async (conn: mysql.Pool, query: string): Promise<Que
     return rows;
 };
 
-export const submitLeaderboardScoreForGame = async (game: string, name: string): Promise<boolean> => {
-    const query = `INSERT INTO ${game} (name) VALUES ("${name}");`;
-    await executeQuery(getPool(), query)
-    return true
-}
 
 export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
     const query = `SELECT * FROM ${game}`;
@@ -34,4 +29,8 @@ export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
     return results;
 };
 
-
+export const submitLeaderboardScoreForGame = async (game: string, name: string): Promise<boolean> => {
+    const query = `INSERT INTO ${game} (name) VALUES ("${name}");`;
+    await executeQuery(getPool(), query)
+    return true
+}
