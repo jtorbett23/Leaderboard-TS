@@ -1,0 +1,26 @@
+services:
+    db:
+        image: mysql:latest
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASS_ROOT}
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_HOST: ${DB_HOST}
+        volumes:
+            - ./db/docker.sql:/docker-entrypoint-initdb.d/local.sql
+    server:
+        build:
+            context: .
+            dockerfile: dev.Dockerfile
+        env_file:
+            - .env
+        ports:
+            - 3000:3000
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+        volumes:
+            - ./src:/app/src
+            - /node_modules
+        depends_on:
+            - db
