@@ -24,7 +24,9 @@ export const submitScore = async (
 ) => {
     try {
         if (!req.body.name)
-            throw { message: 'No name provided for score', status: 422 };
+            throw { message: '"name" must be provided for leaderboard entry', status: 422 };
+        if(!req.body.score && !req.body.time)
+            throw { message: 'Either "score" or "time" must be provided for leaderboard entry', status: 422 };
         const game = req.params.game;
         const name = req.body.name;
         const success = await submitLeaderboardScoreForGame(game, name);

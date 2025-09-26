@@ -67,7 +67,7 @@ describe('POST /leaderboard/:game', () => {
 
         const res = await request(app)
             .post(`/leaderboard/${mockGame}`)
-            .send({ name: mockName })
+            .send({ name: mockName, score: 100 })
             .expect('Content-Type', /json/)
             .expect(200);
         expect(res.body).toStrictEqual(true);
@@ -88,13 +88,33 @@ describe('POST /leaderboard/:game', () => {
 
         const res = await request(app)
             .post(`/leaderboard/${mockGame}`)
-            .send({ noName: mockName })
+            .send({ noName: mockName, score: 100 })
             .expect('Content-Type', /json/)
             .expect(422);
 
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(0);
         expect(res.body).toStrictEqual({
-            message: 'No name provided for score'
+            message: '"name" must be provided for leaderboard entry'
+        });
+    });
+
+    it('should raise an error when both score and time are not sent in body', async () => {
+        const mockSubmitLeaderboardScoreForGame = jest.spyOn(
+            db,
+            'submitLeaderboardScoreForGame'
+        );
+        const mockGame: string = 'test';
+        const mockName: string = 'tester';
+
+        const res = await request(app)
+            .post(`/leaderboard/${mockGame}`)
+            .send({ name: mockName})
+            .expect('Content-Type', /json/)
+            .expect(422);
+
+        expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(0);
+        expect(res.body).toStrictEqual({
+            message: 'Either "score" or "time" must be provided for leaderboard entry'
         });
     });
 
@@ -112,7 +132,7 @@ describe('POST /leaderboard/:game', () => {
 
         const res = await request(app)
             .post(`/leaderboard/${mockGame}`)
-            .send({ name: mockName })
+            .send({ name: mockName, score: 100 })
             .expect('Content-Type', /json/)
             .expect(500);
 
