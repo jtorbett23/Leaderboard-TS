@@ -2,10 +2,11 @@ import request from 'supertest';
 import app from '../app';
 import * as db from '../db/database';
 import { QueryResult } from 'mysql2/promise';
+import { Score } from '../models/leaderboard';
 
 describe('GET /leaderboard/', () => {
     it('should provide empty array when no scores exist', async () => {
-        const getLeaderboardForGameMock = new Promise<QueryResult>(
+        const getLeaderboardForGameMock = new Promise<Score[]>(
             (resolve, reject) => {
                 resolve([]);
             }
@@ -22,7 +23,7 @@ describe('GET /leaderboard/', () => {
     });
 
     it('should raise an error when get_all_data errors', async () => {
-        const getLeaderboardForGameMock = new Promise<QueryResult>(
+        const getLeaderboardForGameMock = new Promise<Score[]>(
             (resolve, reject) => {
                 reject('Database failure');
             }

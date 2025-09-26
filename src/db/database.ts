@@ -1,4 +1,5 @@
-import mysql from 'mysql2/promise';
+import mysql, { QueryResult } from 'mysql2/promise';
+import { Score } from '../models/leaderboard';
 
 const db_config = {
     host: process.env.DB_HOST,
@@ -15,14 +16,14 @@ export const getPool = (): mysql.Pool => {
     return pool;
 };
 
-export const getLeaderboardForGame = async (game: string) => {
+export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
     const query = `SELECT * FROM ${game}`;
     const currentPool: mysql.Pool = getPool();
-    const results = await executeQuery(currentPool, query);
+    const results = await executeQuery(currentPool, query) as Score[]
     return results;
 };
 
-export const executeQuery = async (conn: mysql.Pool, query: string) => {
+export const executeQuery = async (conn: mysql.Pool, query: string): Promise<QueryResult> => {
     const [rows, fields] = await conn.execute(query);
     return rows;
 };
