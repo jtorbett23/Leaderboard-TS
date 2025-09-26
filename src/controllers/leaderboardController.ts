@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { getLeaderboardForGame, submitLeaderboardScoreForGame } from '../db/database';
+import {
+    getLeaderboardForGame,
+    submitLeaderboardScoreForGame
+} from '../db/database';
 
 export const getLeaderboard = async (
     req: Request,
@@ -20,11 +23,11 @@ export const submitScore = async (
     next: NextFunction
 ) => {
     try {
-        if(!req.body.name)
-            throw({message: "No name provided for score", status: 422})
-        const game = req.params.game
-        const name = req.body.name
-        const success = await submitLeaderboardScoreForGame(game, name)
+        if (!req.body.name)
+            throw { message: 'No name provided for score', status: 422 };
+        const game = req.params.game;
+        const name = req.body.name;
+        const success = await submitLeaderboardScoreForGame(game, name);
         return res.json(success);
     } catch (error) {
         next(error);

@@ -3,9 +3,9 @@ import mysql from 'mysql2/promise';
 jest.mock('mysql2/promise');
 
 describe('Database', () => {
-    beforeEach(()=> {
-        jest.resetAllMocks()
-    })
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
     it('getPool', () => {
         const mockCreatePool: any = jest.spyOn(mysql, 'createPool');
 
@@ -69,23 +69,22 @@ describe('Database', () => {
         const mockPool = {} as mysql.Pool;
         const mockGetPool = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
         const mockExecuteQuery = jest.spyOn(db, 'executeQuery');
-        mockExecuteQuery.mockResolvedValue(mockResponseData as mysql.RowDataPacket[])
-        const expectedQuery = `SELECT * FROM ${mockGame}`
-
-        const result = await db.getLeaderboardForGame(mockGame)
-
-        expect(mockExecuteQuery).toHaveBeenCalledTimes(1)
-        expect(mockGetPool).toHaveBeenCalledTimes(1)
-        expect(mockExecuteQuery).toHaveBeenCalledWith(
-            mockPool,
-            expectedQuery   
+        mockExecuteQuery.mockResolvedValue(
+            mockResponseData as mysql.RowDataPacket[]
         );
-        expect(result).toBe(mockResponseData)
+        const expectedQuery = `SELECT * FROM ${mockGame}`;
+
+        const result = await db.getLeaderboardForGame(mockGame);
+
+        expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
+        expect(mockGetPool).toHaveBeenCalledTimes(1);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(result).toBe(mockResponseData);
     });
 
     it('submitLeaderboardScoreForGame', async () => {
-        const mockGame: string = 'test'
-        const mockName: string = 'tester'
+        const mockGame: string = 'test';
+        const mockName: string = 'tester';
         const mockResponseData = [
             {
                 field_1: 123,
@@ -95,17 +94,19 @@ describe('Database', () => {
         const mockPool = {} as mysql.Pool;
         const mockGetPool = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
         const mockExecuteQuery = jest.spyOn(db, 'executeQuery');
-        mockExecuteQuery.mockResolvedValue(mockResponseData as mysql.RowDataPacket[]);
+        mockExecuteQuery.mockResolvedValue(
+            mockResponseData as mysql.RowDataPacket[]
+        );
         const expectedQuery = `INSERT INTO ${mockGame} (name) VALUES ("${mockName}");`;
 
-        const result = await db.submitLeaderboardScoreForGame(mockGame, mockName);
+        const result = await db.submitLeaderboardScoreForGame(
+            mockGame,
+            mockName
+        );
 
         expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
         expect(mockGetPool).toHaveBeenCalledTimes(1);
-        expect(mockExecuteQuery).toHaveBeenCalledWith(
-            mockPool,
-            expectedQuery   
-        );
-        expect(result).toBe(true)
-    })
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(result).toBe(true);
+    });
 });

@@ -16,21 +16,26 @@ export const getPool = (): mysql.Pool => {
     return pool;
 };
 
-export const executeQuery = async (conn: mysql.Pool, query: string): Promise<QueryResult> => {
+export const executeQuery = async (
+    conn: mysql.Pool,
+    query: string
+): Promise<QueryResult> => {
     const [rows, fields] = await conn.execute(query);
     return rows;
 };
 
-
 export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
     const query = `SELECT * FROM ${game}`;
     const currentPool: mysql.Pool = getPool();
-    const results = await executeQuery(currentPool, query) as Score[]
+    const results = (await executeQuery(currentPool, query)) as Score[];
     return results;
 };
 
-export const submitLeaderboardScoreForGame = async (game: string, name: string): Promise<boolean> => {
+export const submitLeaderboardScoreForGame = async (
+    game: string,
+    name: string
+): Promise<boolean> => {
     const query = `INSERT INTO ${game} (name) VALUES ("${name}");`;
-    await executeQuery(getPool(), query)
-    return true
-}
+    await executeQuery(getPool(), query);
+    return true;
+};

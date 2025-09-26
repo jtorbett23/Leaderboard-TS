@@ -13,15 +13,16 @@ Delete all images:
 When using mysql in docker compose the host is the name of the database section
 in services
 
-
 Curls:
 
 Create leaderboard score
 
-curl -X POST http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d '{"name": "Billy"}'
+curl -X POST http://localhost:3000/leaderboard/test -H "Content-Type:
+application/json" -d '{"name": "Billy"}'
 
-With status code
-curl -w '\n %{http_code}'-X POST http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d '{"nme": "Billy"}'
+With status code curl -w '\n %{http_code}'-X POST
+http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d
+'{"nme": "Billy"}'
 
 Get leaderboard scores
 
