@@ -7,16 +7,13 @@ export const authenticateKey = async (
     next: NextFunction
 ) => {
     if (!req.header('x-api-key'))
-        return res.status(403).json({
-            message: 'Unauthorised'
-        });
+        throw { message: 'Unauthorised', status: 403 };
+
     const apiKey: string = String(req.header('x-api-key')); //Get API key from headers
     if (await isValidApiKey(apiKey, req.params.game)) {
         next();
     } else {
-        return res.status(403).json({
-            message: 'Unauthorised'
-        });
+        throw { message: 'Unauthorised', status: 403 };
     }
 };
 
