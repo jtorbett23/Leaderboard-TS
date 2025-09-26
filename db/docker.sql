@@ -14,3 +14,4 @@ CREATE TABLE `test` (
 
 
 INSERT INTO `test` ( `name`, `score`) VALUES ('John', '100');
+INSERT INTO `test` ( `name`, `score`) VALUES ('Grace', '150');

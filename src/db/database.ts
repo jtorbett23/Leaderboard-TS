@@ -9,7 +9,7 @@ const db_config = {
 
 let pool: mysql.Pool | null = null
 
-export const getPool = (): mysql.Pool => {
+export const getPool = (): mysql.Pool | any => {
     if(pool === null)
         pool = mysql.createPool({ connectionLimit: 10, ...db_config })
     return pool
