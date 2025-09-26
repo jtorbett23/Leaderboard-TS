@@ -41,7 +41,8 @@ export const getLeaderboardKeyForGame = async (
         currentPool,
         query
     )) as APIKeyDatabaseResponse[];
-    if (results.length === 0) throw { message: 'Game does not exist' };
+    if (results.length === 0)
+        throw { message: 'Game does not exist', status: 422 };
     return results[0].apiKey;
 };
 
