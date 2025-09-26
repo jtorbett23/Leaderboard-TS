@@ -64,6 +64,8 @@ describe('POST /leaderboard/:game', () => {
             .mockReturnValue(mockReturnSubmitLeaderboardScoreForGame);
         const mockGame: string = 'test';
         const mockName: string = 'tester';
+        const mockScore: number = 100;
+        const mockTime: undefined = undefined;
 
         const res = await request(app)
             .post(`/leaderboard/${mockGame}`)
@@ -74,7 +76,9 @@ describe('POST /leaderboard/:game', () => {
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledWith(
             mockGame,
-            mockName
+            mockName,
+            mockScore,
+            mockTime
         );
     });
 
@@ -108,13 +112,14 @@ describe('POST /leaderboard/:game', () => {
 
         const res = await request(app)
             .post(`/leaderboard/${mockGame}`)
-            .send({ name: mockName})
+            .send({ name: mockName })
             .expect('Content-Type', /json/)
             .expect(422);
 
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(0);
         expect(res.body).toStrictEqual({
-            message: 'Either "score" or "time" must be provided for leaderboard entry'
+            message:
+                'Either "score" or "time" must be provided for leaderboard entry'
         });
     });
 
@@ -129,6 +134,8 @@ describe('POST /leaderboard/:game', () => {
             .mockReturnValue(mockReturnSubmitLeaderboardScoreForGame);
         const mockGame: string = 'test';
         const mockName: string = 'tester';
+        const mockScore: number = 100;
+        const mockTime: undefined = undefined;
 
         const res = await request(app)
             .post(`/leaderboard/${mockGame}`)
@@ -139,7 +146,9 @@ describe('POST /leaderboard/:game', () => {
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledWith(
             mockGame,
-            mockName
+            mockName,
+            mockScore,
+            mockTime
         );
         expect(res.body).toStrictEqual({ message: 'Internal Server Error' });
     });

@@ -22,7 +22,7 @@ application/json" -d '{"name": "Billy"}'
 
 With status code curl -w '\n %{http_code}'-X POST
 http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d
-'{"nme": "Billy"}'
+'{"name": "Billy", "score": 100}'
 
 Get leaderboard scores
 
