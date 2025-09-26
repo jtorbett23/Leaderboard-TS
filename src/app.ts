@@ -1,4 +1,4 @@
-import express, {Application} from 'express';
+import express, { Application } from 'express';
 import leaderboardRoutes from './routes/leaderboardRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 

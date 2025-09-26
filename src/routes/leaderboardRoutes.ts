@@ -1,4 +1,4 @@
-import { Router} from 'express';
+import { Router } from 'express';
 import { getLeaderboard } from '../controllers/leaderboardController';
 const router = Router();
 
