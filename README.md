@@ -18,7 +18,7 @@ Curls:
 Create leaderboard score
 
 curl -X POST http://localhost:3000/leaderboard/test -H "Content-Type:
-application/json" -d '{"name": "Billy"}'
+application/json" -H "x-api-key: test-key" -d '{"name": "Billy", "score": 100}'
 
 With status code curl -w '\n %{http_code}'-X POST
 http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d
@@ -26,4 +26,10 @@ http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d
 
 Get leaderboard scores
 
-curl -X GET http://localhost:3000/leaderboard/test
+curl -X GET http://localhost:3000/leaderboard/test -H "x-api-key:test-key" -H
+"Content-Type: application/json"
+
+TODO:
+
+- Make a database call to validate the API KEY
+- Encrypt api keys in the database

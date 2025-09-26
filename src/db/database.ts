@@ -1,5 +1,6 @@
 import mysql, { QueryResult } from 'mysql2/promise';
 import { Score } from '../models/leaderboard';
+import { APIKeyDatabaseResponse } from '../models/apiKey';
 
 const db_config = {
     host: process.env.DB_HOST,
@@ -29,6 +30,18 @@ export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
     const currentPool: mysql.Pool = getPool();
     const results = (await executeQuery(currentPool, query)) as Score[];
     return results;
+};
+
+export const getLeaderboardKeyForGame = async (
+    game: string
+): Promise<string> => {
+    const query = `SELECT apiKey FROM apiKeys WHERE game="${game}"`;
+    const currentPool: mysql.Pool = getPool();
+    const results = (await executeQuery(
+        currentPool,
+        query
+    )) as APIKeyDatabaseResponse[];
+    return results[0].apiKey;
 };
 
 export const submitLeaderboardScoreForGame = async (

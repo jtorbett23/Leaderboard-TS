@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { validAPIKeys } from '../utils/apiKey';
+import { getLeaderboardKeyForGame } from '../db/database';
 
-export const authenticateKey = (
+export const authenticateKey = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -11,7 +11,7 @@ export const authenticateKey = (
             message: 'Unauthorised'
         });
     const apiKey: string = String(req.header('x-api-key')); //Get API key from headers
-    if (isValidApiKey(apiKey, req.params.game)) {
+    if (await isValidApiKey(apiKey, req.params.game)) {
         next();
     } else {
         return res.status(403).json({
@@ -20,7 +20,10 @@ export const authenticateKey = (
     }
 };
 
-export const isValidApiKey = (apiKey: string, game: string): boolean => {
-    if (validAPIKeys.includes(apiKey)) return true;
+export const isValidApiKey = async (
+    apiKey: string,
+    game: string
+): Promise<boolean> => {
+    if (apiKey === (await getLeaderboardKeyForGame(game))) return true;
     return false;
 };
