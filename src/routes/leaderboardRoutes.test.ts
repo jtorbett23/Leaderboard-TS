@@ -4,6 +4,7 @@ import * as db from '../db/database';
 import { Score } from '../models/leaderboard';
 import { NextFunction, Request, Response } from 'express';
 
+// TODO: assert this is called on each request it should be
 jest.mock('../middlewares/validateApiKey', () => ({
     authenticateKey: (req: Request, res: Response, next: NextFunction) => next()
 }));
@@ -14,7 +15,7 @@ describe('GET /leaderboard/:game', () => {
     });
     it('should provide empty array when no scores exist', async () => {
         const mockReturnGetLeaderboardForGame = new Promise<Score[]>(
-            (resolve, reject) => {
+            (resolve, _reject) => {
                 resolve([]);
             }
         );
@@ -22,7 +23,6 @@ describe('GET /leaderboard/:game', () => {
             .spyOn(db, 'getLeaderboardForGame')
             .mockReturnValue(mockReturnGetLeaderboardForGame);
         const mockGame: string = 'test';
-
         const res = await request(app)
             .get(`/leaderboard/${mockGame}`)
             .expect('Content-Type', /json/)

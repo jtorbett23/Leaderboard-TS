@@ -6,12 +6,21 @@ export const authenticateKey = (
     res: Response,
     next: NextFunction
 ) => {
-    let api_key: string = String(req.header('x-api-key')); //Add API key to headers
-    if (validAPIKeys.includes(api_key)) {
+    if (!req.header('x-api-key'))
+        return res.status(403).json({
+            message: 'Unauthorised'
+        });
+    const apiKey: string = String(req.header('x-api-key')); //Get API key from headers
+    if (isValidApiKey(apiKey, req.params.game)) {
         next();
     } else {
-        res.status(403).json({
+        return res.status(403).json({
             message: 'Unauthorised'
         });
     }
+};
+
+export const isValidApiKey = (apiKey: string, game: string): boolean => {
+    if (validAPIKeys.includes(apiKey)) return true;
+    return false;
 };
