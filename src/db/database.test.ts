@@ -63,7 +63,7 @@ describe('Database', () => {
                 field_2: 456
             }
         ];
-        const mockPool = 'the pool';
+        const mockPool = {} as mysql.Pool;
         const getPoolMock = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
 
         const executeQueryMock = jest.spyOn(db, 'executeQuery');

@@ -7,7 +7,7 @@ export const getLeaderboard = async (
     next: NextFunction
 ) => {
     try {
-        let data = await getLeaderboardForGame('test');
+        const data = await getLeaderboardForGame(req.params.game);
         return res.json(data);
     } catch (error) {
         next(error);

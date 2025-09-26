@@ -14,7 +14,7 @@ describe('GET /leaderboard/', () => {
         mock.mockReturnValue(getLeaderboardForGameMock);
 
         const res = await request(app)
-            .get('/leaderboard')
+            .get('/leaderboard/test')
             .expect('Content-Type', /json/)
             .expect(200);
 
@@ -31,7 +31,7 @@ describe('GET /leaderboard/', () => {
         mock.mockReturnValue(getLeaderboardForGameMock);
 
         const res = await request(app)
-            .get('/leaderboard')
+            .get('/leaderboard/test')
             .expect('Content-Type', /json/)
             .expect(500);
     });
