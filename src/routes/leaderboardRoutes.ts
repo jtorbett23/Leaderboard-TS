@@ -3,10 +3,12 @@ import {
     getLeaderboard,
     submitScore
 } from '../controllers/leaderboardController';
+import { authenticateKey } from '../middlewares/validateApiKey';
+
 const router = Router();
 
-router.get('/:game', getLeaderboard);
+router.get('/:game', authenticateKey, getLeaderboard);
 
-router.post('/:game', submitScore);
+router.post('/:game', authenticateKey, submitScore);
 
 export default router;

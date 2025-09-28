@@ -15,3 +15,12 @@ CREATE TABLE `test` (
 
 INSERT INTO `test` ( `name`, `score`) VALUES ('John', '100');
 INSERT INTO `test` ( `name`, `score`) VALUES ('Grace', '150');
+
+CREATE TABLE `apiKeys` (
+  `id` int(9) unsigned NOT NULL AUTO_INCREMENT,
+  `game` varchar(100) NOT NULL,
+  `apiKey` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+INSERT INTO `apiKeys` (`game`, `apiKey`) VALUES ('test', 'test-key') 

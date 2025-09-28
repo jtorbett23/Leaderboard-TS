@@ -17,13 +17,21 @@ Curls:
 
 Create leaderboard score
 
-curl -X POST http://localhost:3000/leaderboard/test -H "Content-Type:
-application/json" -d '{"name": "Billy"}'
+curl -X POST http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -H "x-api-key: test-key" -d '{"name": "Billy", "score": 100}'
 
 With status code curl -w '\n %{http_code}'-X POST
-http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d
-'{"nme": "Billy"}'
+http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d '{"name": "Billy", "score": 100}'
 
 Get leaderboard scores
 
-curl -X GET http://localhost:3000/leaderboard/test
+curl -X GET http://localhost:3000/leaderboard/test -H "x-api-key:test-key" -H "Content-Type: application/json"
+
+curl -w '\n %{http_code}' -X GET http://localhost:3000/leaderboard/test -H "x-api-key:test-key" -H "Content-Type: application/json"
+
+TODO:
+
+- Add health endpoint + unit test
+- update config with new env vars
+- Setup database and populate with apikey
+- Deploy to render
+- Encrypt api keys in the database
