@@ -106,7 +106,7 @@ describe('Database', () => {
         expect(result).toBe(mockApiKey);
     });
 
-    it('getLeaderboardKeyForGame fails with empty array', async () => {
+    it('getLeaderboardKeyForGame fails with no key found', async () => {
         const mockGame: string = 'test';
         const mockResponseData: mysql.RowDataPacket[] = [];
         const mockPool = {} as mysql.Pool;
@@ -119,8 +119,8 @@ describe('Database', () => {
             await db.getLeaderboardKeyForGame(mockGame);
         } catch (err) {
             expect(err).toStrictEqual({
-                message: 'Game does not exist',
-                status: 422
+                message: 'Unauthorised',
+                status: 403
             });
         }
 

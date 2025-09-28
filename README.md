@@ -30,7 +30,9 @@ curl -w '\n %{http_code}' -X GET http://localhost:3000/leaderboard/test -H "x-ap
 
 TODO:
 
-- Finish unit tests
+- unit test current code
+- Add health endpoint + unit test
+- update config with new env vars
 - Setup database and populate with apikey
 - Deploy to render
 - Encrypt api keys in the database
