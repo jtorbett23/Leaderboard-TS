@@ -2,6 +2,8 @@ import request from 'supertest';
 import app from '../app';
 import * as db from '../db/database';
 
+// Testing the full routing behaviour including middlware
+
 describe('GET /leaderboard/:game', () => {
     const mockGame: string = 'test';
     const mockApiKey: string = 'test-key';
