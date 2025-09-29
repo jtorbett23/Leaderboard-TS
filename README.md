@@ -1,35 +1,13 @@
-Access docker compose db:
+# Leaderboard API Typescript
 
-- docker exec -it leaderboard-db-1 bash
+## Description
+Express API for loading and saving leaderboard scores
 
-Delete all containers:
+## Developement
+- Install for development: `yarn install -D`
+- Run tests: `yarn test`
+- Run locally with docker: `docker compose up`
 
-- docker rm -vf $(docker ps -aq)
+## Production
+- Build and run the Dockerfile
 
-Delete all images:
-
-- docker rmi -f $(docker images -aq)
-
-When using mysql in docker compose the host is the name of the database section
-in services
-
-Curls:
-
-Create leaderboard score
-
-curl -X POST http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -H "x-api-key: test-key" -d '{"name": "Billy", "score": 100}'
-
-With status code curl -w '\n %{http_code}'-X POST
-http://localhost:3000/leaderboard/test -H "Content-Type: application/json" -d '{"name": "Billy", "score": 100}'
-
-Get leaderboard scores
-
-curl -X GET http://localhost:3000/leaderboard/test -H "x-api-key:test-key" -H "Content-Type: application/json"
-
-curl -w '\n %{http_code}' -X GET http://localhost:3000/leaderboard/test -H "x-api-key:test-key" -H "Content-Type: application/json"
-
-TODO:
-
-- Setup database and populate with apikey
-- Deploy to render
-- Encrypt api keys in the database
