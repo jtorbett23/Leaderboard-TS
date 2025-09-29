@@ -1,7 +1,6 @@
 import mysql, { QueryResult } from 'mysql2/promise';
 import { Score } from '../models/leaderboard';
 import { APIKeyDatabaseResponse } from '../models/apiKey';
-import { error } from 'console';
 
 const db_config = {
     host: process.env.DB_HOST,
