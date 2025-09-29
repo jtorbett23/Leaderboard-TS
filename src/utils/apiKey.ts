@@ -4,5 +4,3 @@ export const genAPIKey = (): string => {
         .map(() => ((Math.random() * 36) | 0).toString(36))
         .join('');
 };
-
-export const validAPIKeys = [process.env.TEST_API_KEY];
