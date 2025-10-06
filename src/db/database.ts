@@ -26,6 +26,19 @@ export const executeQuery = async (
     return rows;
 };
 
+type TableNameResponse = {
+    TABLE_NAME: string
+}
+
+export const getTableNames = async (): Promise<string[]> => {
+	const query: string = "SELECT table_name FROM information_schema.tables WHERE table_schema = ?;"
+    const currentPool: mysql.Pool = getPool();
+    // [ { TABLE_NAME: 'tableName' }]
+    const results = (await executeQuery(currentPool, query, [String(db_config.database)])) as TableNameResponse[]
+    const tableNames : string[] = results.map((item: TableNameResponse)=> item.TABLE_NAME)
+	return tableNames
+}
+
 export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
     const query = `SELECT * FROM ${game};`;
     const currentPool: mysql.Pool = getPool();

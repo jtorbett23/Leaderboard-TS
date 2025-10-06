@@ -12,9 +12,11 @@ describe('GET /leaderboard/:game', () => {
         'getLeaderboardKeyForGame'
     );
     const mockGetLeaderboardForGame = jest.spyOn(db, 'getLeaderboardForGame');
+    const mockGetTablesNames = jest.spyOn(db, 'getTableNames')
 
     beforeEach(() => {
         jest.resetAllMocks();
+        mockGetTablesNames.mockResolvedValue([mockGame])
     });
 
     // 200
@@ -28,6 +30,7 @@ describe('GET /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(200);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockGetLeaderboardForGame).toHaveBeenCalledTimes(1);
@@ -45,6 +48,7 @@ describe('GET /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(500);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(res.body).toStrictEqual({ message: 'Internal Server Error' });
@@ -61,7 +65,8 @@ describe('GET /leaderboard/:game', () => {
             .set('x-api-key', mockApiKey)
             .expect('Content-Type', /json/)
             .expect(500);
-
+        
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockGetLeaderboardForGame).toHaveBeenCalledTimes(1);
@@ -80,6 +85,7 @@ describe('GET /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(500);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(res.body).toStrictEqual({ message: 'Database failure' });
@@ -105,8 +111,23 @@ describe('GET /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(403);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
+        expect(res.body).toStrictEqual({ message: 'Unauthorised' });
+    });
+
+    it('should return 403 when requested game does not exist', async () => {
+        mockGetTablesNames.mockResolvedValue(["fakeGame"])
+
+        const res = await request(app)
+            .get(`/leaderboard/${mockGame}`)
+            .set('x-api-key', mockApiKey)
+            .expect('Content-Type', /json/)
+            .expect(403);
+
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
+        expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(0);
         expect(res.body).toStrictEqual({ message: 'Unauthorised' });
     });
 });
@@ -126,8 +147,12 @@ describe('POST /leaderboard/:game', () => {
         'getLeaderboardKeyForGame'
     );
 
+    const mockGetTablesNames = jest.spyOn(db, 'getTableNames')
+
+
     beforeEach(() => {
         jest.resetAllMocks();
+        mockGetTablesNames.mockResolvedValue([mockGame])
     });
 
     // 200
@@ -142,6 +167,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(200);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1);
@@ -165,6 +191,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(200);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1);
@@ -188,6 +215,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(422);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(0);
@@ -206,6 +234,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(422);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(0);
@@ -225,6 +254,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(500);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(res.body).toStrictEqual({ message: 'Internal Server Error' });
@@ -242,6 +272,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(500);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(mockSubmitLeaderboardScoreForGame).toHaveBeenCalledTimes(1);
@@ -266,6 +297,7 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(500);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
         expect(res.body).toStrictEqual({ message: 'Database failure' });
@@ -291,8 +323,23 @@ describe('POST /leaderboard/:game', () => {
             .expect('Content-Type', /json/)
             .expect(403);
 
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(1);
         expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledWith(mockGame);
+        expect(res.body).toStrictEqual({ message: 'Unauthorised' });
+    });
+
+    it('should return 403 when requested game does not exist', async () => {
+        mockGetTablesNames.mockResolvedValue(["fakeGame"])
+
+        const res = await request(app)
+            .post(`/leaderboard/${mockGame}`)
+            .set('x-api-key', mockApiKey)
+            .expect('Content-Type', /json/)
+            .expect(403);
+            
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
+        expect(mockGetLeaderboardKeyForGame).toHaveBeenCalledTimes(0);
         expect(res.body).toStrictEqual({ message: 'Unauthorised' });
     });
 });

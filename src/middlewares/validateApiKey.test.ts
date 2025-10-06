@@ -10,6 +10,8 @@ describe('validApiKey Middleware - authenticateKey', () => {
     const mockApiKey = 'test-key';
     const mockNext = jest.fn();
     let mockIsValidApiKey = jest.spyOn(auth, 'isValidApiKey');
+    const mockGetTablesNames = jest.spyOn(db, 'getTableNames')
+
 
     beforeEach(() => {
         jest.resetAllMocks();
@@ -21,6 +23,8 @@ describe('validApiKey Middleware - authenticateKey', () => {
     });
 
     it('authenticateKey - should call next for valid api key ', async () => {
+        
+        mockGetTablesNames.mockResolvedValue([mockGame])
         mockIsValidApiKey.mockResolvedValue(true);
         mockReq.header = jest.fn().mockImplementation(() => mockApiKey);
         mockReq.params = { game: mockGame };
@@ -33,8 +37,9 @@ describe('validApiKey Middleware - authenticateKey', () => {
     });
 
     it('authenticateKey - should throw 403 unauthorised with no x-api-key ', async () => {
+        mockGetTablesNames.mockResolvedValue([mockGame])
         mockReq.header = jest.fn().mockImplementation(() => undefined);
-
+        
         try {
             await authenticateKey(mockReq, mockRes, mockNext);
         } catch (err) {
@@ -43,9 +48,12 @@ describe('validApiKey Middleware - authenticateKey', () => {
 
         expect(mockNext).toHaveBeenCalledTimes(0);
         expect(mockIsValidApiKey).toHaveBeenCalledTimes(0);
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
+
     });
 
     it('authenticateKey - should throw 403 unauthorised if api-key is not valid', async () => {
+        mockGetTablesNames.mockResolvedValue([mockGame])
         mockIsValidApiKey.mockResolvedValue(false);
         mockReq.header = jest.fn().mockImplementation(() => mockApiKey);
         mockReq.params = { game: mockGame };
@@ -57,9 +65,29 @@ describe('validApiKey Middleware - authenticateKey', () => {
         }
 
         expect(mockNext).toHaveBeenCalledTimes(0);
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
         expect(mockIsValidApiKey).toHaveBeenCalledTimes(1);
         expect(mockIsValidApiKey).toHaveBeenCalledWith(mockApiKey, mockGame);
     });
+
+     it('authenticateKey - should throw 403 when requested table does not exist', async () => {
+        mockGetTablesNames.mockResolvedValue(["notRealTable"])
+        mockIsValidApiKey.mockResolvedValue(false);
+        mockReq.header = jest.fn().mockImplementation(() => mockApiKey);
+        mockReq.params = { game: mockGame };
+
+        try {
+            await authenticateKey(mockReq, mockRes, mockNext);
+        } catch (err) {
+            expect(err).toStrictEqual({ message: 'Unauthorised', status: 403 });
+        }
+
+        expect(mockGetTablesNames).toHaveBeenCalledTimes(1)
+        expect(mockNext).toHaveBeenCalledTimes(0);
+        expect(mockIsValidApiKey).toHaveBeenCalledTimes(0);
+
+    });
+
 });
 
 describe('validApiKey Middleware - isValidApi', () => {
