@@ -202,6 +202,28 @@ describe('Database', () => {
         expect(result).toBe(true);
     });
 
+    it('getTableNames', async () => {
+        const mockGame: string = 'test';
+        const mockResponseData = [
+            {
+                TABLE_NAME: mockGame
+            }
+        ];
+        const mockPool = {} as mysql.Pool;
+        const mockGetPool = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
+        const mockExecuteQuery = jest.spyOn(db, 'executeQuery');
+        mockExecuteQuery.mockResolvedValue(
+            mockResponseData as mysql.RowDataPacket[]
+        );
+        const expectedQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = ?;"
+        const result = await db.getTableNames();
+
+        expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
+        expect(mockGetPool).toHaveBeenCalledTimes(1);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery, ["undefined"])
+        expect(result).toStrictEqual([mockGame]);
+    });
+
     it('submitLeaderboardScoreForGame with score and time', async () => {
         const mockGame: string = 'test';
         const mockName: string = 'tester';
