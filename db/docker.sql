@@ -12,7 +12,7 @@ CREATE TABLE `test` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-
+INSERT INTO `test` ( `name`, `time`) VALUES ('Alex', '60');
 INSERT INTO `test` ( `name`, `score`) VALUES ('John', '100');
 INSERT INTO `test` ( `name`, `score`) VALUES ('Grace', '150');
 

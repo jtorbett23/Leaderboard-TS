@@ -28,6 +28,7 @@ describe('Database', () => {
         expect(mockCreatePool).toHaveBeenCalledTimes(1);
     });
     it('executeQuery', async () => {
+        const mockGame: string = 'test';
         const mockResponseData = [
             [
                 {
@@ -42,7 +43,7 @@ describe('Database', () => {
             []
         ];
 
-        const mockQuery: string = 'SELECT * FROM test';
+        const mockQuery: string = `SELECT * FROM ${mockGame};`;
         const mockPool = {
             execute: jest.fn(() => {
                 return new Promise((resolve) => {
@@ -54,7 +55,7 @@ describe('Database', () => {
         const result = await db.executeQuery(mockPool, mockQuery);
 
         expect(mockPool.execute).toHaveBeenCalledTimes(1);
-        expect(mockPool.execute).toHaveBeenCalledWith(mockQuery);
+        expect(mockPool.execute).toHaveBeenCalledWith(mockQuery, []);
         expect(result).toBe(mockResponseData[0]);
     });
 
@@ -72,7 +73,7 @@ describe('Database', () => {
         mockExecuteQuery.mockResolvedValue(
             mockResponseData as mysql.RowDataPacket[]
         );
-        const expectedQuery = `SELECT * FROM ${mockGame}`;
+        const expectedQuery = `SELECT * FROM ${mockGame};`;
 
         const result = await db.getLeaderboardForGame(mockGame);
 
@@ -96,13 +97,15 @@ describe('Database', () => {
         mockExecuteQuery.mockResolvedValue(
             mockResponseData as mysql.RowDataPacket[]
         );
-        const expectedQuery = `SELECT apiKey FROM apiKeys WHERE game="${mockGame}"`;
+        const expectedQuery = 'SELECT apiKey FROM apiKeys WHERE game=?;';
 
         const result = await db.getLeaderboardKeyForGame(mockGame);
 
         expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
         expect(mockGetPool).toHaveBeenCalledTimes(1);
-        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery, [
+            mockGame
+        ]);
         expect(result).toBe(mockApiKey);
     });
 
@@ -113,7 +116,7 @@ describe('Database', () => {
         const mockGetPool = jest.spyOn(db, 'getPool').mockReturnValue(mockPool);
         const mockExecuteQuery = jest.spyOn(db, 'executeQuery');
         mockExecuteQuery.mockResolvedValue(mockResponseData);
-        const expectedQuery = `SELECT apiKey FROM apiKeys WHERE game="${mockGame}"`;
+        const expectedQuery = 'SELECT apiKey FROM apiKeys WHERE game=?;';
 
         try {
             await db.getLeaderboardKeyForGame(mockGame);
@@ -126,7 +129,9 @@ describe('Database', () => {
 
         expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
         expect(mockGetPool).toHaveBeenCalledTimes(1);
-        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery, [
+            mockGame
+        ]);
     });
 
     it('submitLeaderboardScoreForGame with score', async () => {
@@ -145,7 +150,7 @@ describe('Database', () => {
         mockExecuteQuery.mockResolvedValue(
             mockResponseData as mysql.RowDataPacket[]
         );
-        const expectedQuery = `INSERT INTO ${mockGame} (name, score) VALUES ("${mockName}", "${mockScore}");`;
+        const expectedQuery = `INSERT INTO ${mockGame} (name, score) VALUES (?, ?);`;
 
         const result = await db.submitLeaderboardScoreForGame(
             mockGame,
@@ -155,7 +160,10 @@ describe('Database', () => {
 
         expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
         expect(mockGetPool).toHaveBeenCalledTimes(1);
-        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery, [
+            mockName,
+            mockScore
+        ]);
         expect(result).toBe(true);
     });
 
@@ -176,7 +184,7 @@ describe('Database', () => {
         mockExecuteQuery.mockResolvedValue(
             mockResponseData as mysql.RowDataPacket[]
         );
-        const expectedQuery = `INSERT INTO ${mockGame} (name, time) VALUES ("${mockName}", "${mockTime}");`;
+        const expectedQuery = `INSERT INTO ${mockGame} (name, time) VALUES (?, ?);`;
 
         const result = await db.submitLeaderboardScoreForGame(
             mockGame,
@@ -187,7 +195,10 @@ describe('Database', () => {
 
         expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
         expect(mockGetPool).toHaveBeenCalledTimes(1);
-        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery, [
+            mockName,
+            mockTime
+        ]);
         expect(result).toBe(true);
     });
 
@@ -208,7 +219,7 @@ describe('Database', () => {
         mockExecuteQuery.mockResolvedValue(
             mockResponseData as mysql.RowDataPacket[]
         );
-        const expectedQuery = `INSERT INTO ${mockGame} (name, score, time) VALUES ("${mockName}", "${mockScore}", "${mockTime}");`;
+        const expectedQuery = `INSERT INTO ${mockGame} (name, score, time) VALUES (?, ?, ?);`;
 
         const result = await db.submitLeaderboardScoreForGame(
             mockGame,
@@ -219,7 +230,11 @@ describe('Database', () => {
 
         expect(mockExecuteQuery).toHaveBeenCalledTimes(1);
         expect(mockGetPool).toHaveBeenCalledTimes(1);
-        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery);
+        expect(mockExecuteQuery).toHaveBeenCalledWith(mockPool, expectedQuery, [
+            mockName,
+            mockScore,
+            mockTime
+        ]);
         expect(result).toBe(true);
     });
 });
