@@ -1,11 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
-import { getLeaderboardKeyForGame } from '../db/database';
+import { getLeaderboardKeyForGame, getTableNames } from '../db/database';
 
 export const authenticateKey = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
+    // Check if game table exists
+    const validTableNames = await getTableNames()
+    if(!validTableNames.includes(req.params.game))
+        throw { message: 'Unauthorised', status: 403 };
+    
     if (!req.header('x-api-key'))
         throw { message: 'Unauthorised', status: 403 };
 

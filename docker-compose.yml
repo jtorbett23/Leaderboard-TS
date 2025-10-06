@@ -8,7 +8,7 @@ services:
             MYSQL_DATABASE: ${DB_NAME}
             MYSQL_HOST: ${DB_HOST}
         volumes:
-            - ./db/docker.sql:/docker-entrypoint-initdb.d/local.sql
+            - ./docker-config/docker.sql:/docker-entrypoint-initdb.d/local.sql
     server:
         build:
             context: .

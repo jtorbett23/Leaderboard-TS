@@ -8,7 +8,7 @@ const app: Application = express();
 app.use(express.json());
 
 // Routes
-app.use('/health', healthRoutes)
+app.use('/health', healthRoutes);
 app.use('/leaderboard', leaderboardRoutes);
 
 // Global error handler (should be after routes)

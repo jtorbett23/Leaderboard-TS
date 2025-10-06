@@ -19,14 +19,28 @@ export const getPool = (): mysql.Pool => {
 
 export const executeQuery = async (
     conn: mysql.Pool,
-    query: string
+    query: string,
+    values: (string | number)[] = []
 ): Promise<QueryResult> => {
-    const [rows, fields] = await conn.execute(query);
+    const [rows, fields] = await conn.execute(query, values);
     return rows;
 };
 
+type TableNameResponse = {
+    TABLE_NAME: string
+}
+
+export const getTableNames = async (): Promise<string[]> => {
+	const query: string = "SELECT table_name FROM information_schema.tables WHERE table_schema = ?;"
+    const currentPool: mysql.Pool = getPool();
+    // [ { TABLE_NAME: 'tableName' }]
+    const results = (await executeQuery(currentPool, query, [String(db_config.database)])) as TableNameResponse[]
+    const tableNames : string[] = results.map((item: TableNameResponse)=> item.TABLE_NAME)
+	return tableNames
+}
+
 export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
-    const query = `SELECT * FROM ${game}`;
+    const query = `SELECT * FROM ${game};`;
     const currentPool: mysql.Pool = getPool();
     const results = (await executeQuery(currentPool, query)) as Score[];
     return results;
@@ -35,12 +49,12 @@ export const getLeaderboardForGame = async (game: string): Promise<Score[]> => {
 export const getLeaderboardKeyForGame = async (
     game: string
 ): Promise<string> => {
-    const query = `SELECT apiKey FROM apiKeys WHERE game="${game}"`;
+    // add check that game table exists in DB
+    const query = 'SELECT apiKey FROM apiKeys WHERE game=?;';
     const currentPool: mysql.Pool = getPool();
-    const results = (await executeQuery(
-        currentPool,
-        query
-    )) as APIKeyDatabaseResponse[];
+    const results = (await executeQuery(currentPool, query, [
+        game
+    ])) as APIKeyDatabaseResponse[];
     if (results.length === 0) throw { message: 'Unauthorised', status: 403 };
 
     return results[0].apiKey;
@@ -54,19 +68,22 @@ export const submitLeaderboardScoreForGame = async (
 ): Promise<boolean> => {
     // Build the query depending on which inputs exist
     var fields: string = '(name';
-    var values: string = `("${name}"`;
+    var valuesStr: string = `(?`;
+    var values: (string | number)[] = [name];
     if (score !== undefined) {
         fields += ', score';
-        values += `, "${score}"`;
+        valuesStr += `, ?`;
+        values.push(score);
     }
     if (time !== undefined) {
         fields += ', time';
-        values += `, "${time}"`;
+        valuesStr += `, ?`;
+        values.push(time);
     }
     fields += ')';
-    values += ')';
+    valuesStr += ')';
 
-    const query = `INSERT INTO ${game} ${fields} VALUES ${values};`;
-    await executeQuery(getPool(), query);
+    const query = `INSERT INTO ${game} ${fields} VALUES ${valuesStr};`;
+    await executeQuery(getPool(), query, values);
     return true;
 };
